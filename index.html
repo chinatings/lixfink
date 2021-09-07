@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>小蚂蚁的窝</title>
+    <script src="js/music.js"></script>
+    <script src="js/musiclist.js"></script>
+    <style>
+        body {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #fullscreen {
+            position: fixed;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            background-size: cover;
+            background-image: url('images/bg1.jpeg');
+            transition-duration: 0.5s;
+        }
+
+        .mask {
+            position: absolute;
+            bottom: 0px;
+        }
+
+        .musicWidget {
+            width: 300px;
+            background: red;
+            padding: 30px 20px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+        }
+
+        .musicWidget .title {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+
+        .musicWidget .list ul {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .musicWidget .list li {
+            list-style: none;
+            padding: 5px 10px;
+            width: calc(100% - 20px);
+            cursor: pointer;
+            color: rgb(233, 233, 233);
+            font-size: 14px;
+        }
+
+        .musicWidget .list li:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .playerWidget {
+            width: 400px;
+            height: 120px;
+            position: absolute;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            left: 100px;
+            top: 50px;
+        }
+
+        .playerWidget .progressbox {
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            bottom: 6px;
+            height: 5px;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .playerWidget #progressbar {
+            width: 0px;
+            height: 5px;
+            background: #cdcdcd;
+        }
+
+        .playerWidget .palyerbtns {
+            position: absolute;
+            left: 10px;
+            right: 60px;
+            top: 25px;
+            height: 80px;
+            display: flex;
+        }
+
+        .playerWidget .palyerbtns div {
+            flex: 1;
+            text-align: center;
+
+        }
+
+        .playerWidget .palyerbtns .icon {
+            cursor: pointer;
+        }
+
+        .playerWidget .palyerbtns .icon path {
+            fill: #cdcdcd;
+        }
+
+        .playerWidget .palyerbtns .icon:hover path {
+            fill: #ebebeb;
+        }
+
+        .footer{
+            width: 100%;
+            position: absolute;
+            bottom: 10px;
+            text-align: center;
+            z-index: 999;
+        }
+
+        .footer a{
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="fullscreen">
+
+        <div class="musicWidget">
+            <div class="title">我的歌单</div>
+            <div class="list">
+                <ul id="musiclist">
+                </ul>
+            </div>
+        </div>
+
+        <div class="playerWidget">
+
+            <div class="palyerbtns">
+                <div>
+                    <svg class="icon" id="back" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" width="60" height="60">
+                        <path
+                            d="M671.968 912c-12.288 0-24.576-4.672-33.952-14.048L286.048 545.984c-18.752-18.72-18.752-49.12 0-67.872l351.968-352c18.752-18.752 49.12-18.752 67.872 0 18.752 18.72 18.752 49.12 0 67.872l-318.016 318.048 318.016 318.016c18.752 18.752 18.752 49.12 0 67.872C696.544 907.328 684.256 912 671.968 912z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <svg class="icon" id="play" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" width="60" height="60">
+                        <path
+                            d="M817.088 484.96l-512-323.744C295.232 154.976 282.752 154.592 272.576 160.224 262.336 165.856 256 176.608 256 188.256l0 647.328c0 11.648 6.336 22.4 16.576 28.032 4.8 2.656 10.112 3.968 15.424 3.968 5.952 0 11.904-1.664 17.088-4.928l512-323.616C826.368 533.184 832 522.976 832 512 832 501.024 826.368 490.816 817.088 484.96z">
+                        </path>
+                    </svg>
+                    <svg class="icon" id="pause" style="display: none;" viewBox="0 0 1024 1024" version="1.1"
+                        xmlns="http://www.w3.org/2000/svg" p-id="6536" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        width="60" height="60">
+                        <path
+                            d="M352 768c-17.664 0-32-14.304-32-32L320 288c0-17.664 14.336-32 32-32s32 14.336 32 32l0 448C384 753.696 369.664 768 352 768z">
+                        </path>
+                        <path
+                            d="M672 768c-17.696 0-32-14.304-32-32L640 288c0-17.664 14.304-32 32-32s32 14.336 32 32l0 448C704 753.696 689.696 768 672 768z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <svg class="icon" id="next" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" width="60" height="60">
+                        <path
+                            d="M761.056 532.128c0.512-0.992 1.344-1.824 1.792-2.848 8.8-18.304 5.92-40.704-9.664-55.424L399.936 139.744c-19.264-18.208-49.632-17.344-67.872 1.888-18.208 19.264-17.376 49.632 1.888 67.872l316.96 299.84-315.712 304.288c-19.072 18.4-19.648 48.768-1.248 67.872 9.408 9.792 21.984 14.688 34.56 14.688 12 0 24-4.48 33.312-13.44l350.048-337.376c0.672-0.672 0.928-1.6 1.6-2.304 0.512-0.48 1.056-0.832 1.568-1.344C757.76 538.88 759.2 535.392 761.056 532.128z">
+                        </path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="progressbox">
+                <div id="progressbar">
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <a href="https://beian.miit.gov.cn/" target="blank">京ICP备2020037195号-3</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://webify.cloudbase.net" target="blank">CloudBase Webify 提供网站托管服务</a>
+        </div>
+
+    </div>
+
+    <script>
+
+
+        let currentMusic;
+        let currentTitle = ""
+
+        let progressbar = document.getElementById("progressbar")
+        let fullscreen = document.getElementById("fullscreen")
+        let playBtn = document.getElementById("play")
+        let pauseBtn = document.getElementById("pause")
+
+
+        function playMusic(title) {
+            if (currentMusic) {
+                currentMusic.stopPlay()
+            }
+            selectMusic(title)
+            currentTitle = title
+            currentMusic = undefined
+            let index = musiclist.findIndex(m => m.title === title)
+            if (index !== -1) {
+                fullscreen.style.backgroundImage = `url('${musiclist[index].img}')`
+                currentMusic = new Music("fullscreen", {
+                    musicurl: musiclist[index].url,
+                    background: "rgba(255,255,255,0.4)",
+                    interval: 200,
+                    slicesnum: 30,
+                })
+                currentMusic.onPlayProgress((status, percent) => {
+                    if (status === "play" || status === "continue") {
+                        playBtn.style.display = "none"
+                        pauseBtn.style.display = ""
+                    }
+                    if (status === "end" || status === "pause") {
+                        playBtn.style.display = ""
+                        pauseBtn.style.display = "none"
+                    }
+                    if (status === "playing") {
+                        if(progressbar){
+                            progressbar.style.width = `${percent}%`
+                        }else{
+                           // console.log(status,"-->异常回调。。。。")
+                        }
+                        
+                    }
+
+                })
+                currentMusic.startPlay()
+            }
+
+
+        }
+
+        function selectMusic(title){
+           let musics = document.getElementById("musiclist").getElementsByTagName("li")
+           for(let music of musics){
+               if(music.getAttribute("title") === title){
+                music.style.color = "rgb(101, 255, 81)"
+               }else{
+                   music.style.color = "rgb(233, 233, 233)"
+               }
+           }
+        }
+
+        function fillMusicList() {
+            let items = document.getElementById("musiclist")
+            for (let item of musiclist) {
+                let music = document.createElement("li")
+                music.innerHTML = item.title
+                music.setAttribute("title",item.title)
+
+                music.addEventListener("click", () => {
+                    playMusic(item.title)
+                })
+                items.append(music)
+            }
+
+        }
+
+        window.onload = function () {
+            fillMusicList()
+            document.getElementById("back").addEventListener("click", () => {
+                if (!currentTitle) {
+                    playMusic(musiclist[musiclist.length - 1].title)
+                } else {
+                    let index = musiclist.findIndex(m => m.title === currentTitle)
+                    if (index !== -1) {
+                        let backIndex = musiclist.length - 1
+                        if (index !== 0) {
+                            backIndex = index - 1
+                        }
+                        playMusic(musiclist[backIndex].title)
+                    }
+                }
+
+            })
+            document.getElementById("next").addEventListener("click", () => {
+                if (!currentTitle) {
+                    playMusic(musiclist[0].title)
+                } else {
+                    let index = musiclist.findIndex(m => m.title === currentTitle)
+                    if (index !== -1) {
+                        let backIndex = 0
+                        if (index !== musiclist.length - 1) {
+                            backIndex = index + 1
+                        }
+                        playMusic(musiclist[backIndex].title)
+                    }
+                }
+            })
+            playBtn.addEventListener("click", () => {
+                if (!currentMusic) {
+                    playMusic(musiclist[0].title)
+                } else {
+                    currentMusic.continuePlay()
+                }
+
+            })
+            pauseBtn.addEventListener("click", () => {
+                if (currentMusic) {
+                    currentMusic.pausePlay()
+                }
+            })
+        }
+    </script>
+
+</body>
+
+</html>
